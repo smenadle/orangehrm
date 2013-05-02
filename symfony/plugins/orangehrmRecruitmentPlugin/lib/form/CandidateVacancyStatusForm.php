@@ -151,6 +151,10 @@ class CandidateVacancyStatusForm extends BaseForm {
 
 			$this->getCandidateService()->addEmployee($employee);
 		}
+		
+		 //Now send mail to HR admin and Hiring manager
+        $interviewMailer = new InterviewMailer($empNumber, $this->candidateId, $this->vacancyId,$this->selectedAction, null);
+	    $interviewMailer->send();
 	}
 
 }

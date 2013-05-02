@@ -99,6 +99,8 @@ class viewCandidatesForm extends BaseForm {
             'hiringManager' => new sfWidgetFormSelect(array('choices' => $hiringManagerList)),
             'status' => new sfWidgetFormSelect(array('choices' => $statusList)),
             'candidateName' => new sfWidgetFormInputText(),
+            'referralName'=> new sfWidgetFormInputText(),
+            'referralId'=> new sfWidgetFormInputHidden(),
             'selectedCandidate' => new sfWidgetFormInputHidden(),
             'keywords' => new sfWidgetFormInputText(),
             'modeOfApplication' => new sfWidgetFormSelect(array('choices' => $modeOfApplication)),
@@ -115,6 +117,8 @@ class viewCandidatesForm extends BaseForm {
             'hiringManager' => new sfValidatorString(array('required' => false)),
             'status' => new sfValidatorString(array('required' => false)),
             'candidateName' => new sfValidatorString(array('required' => false)),
+            'referralName'=> new sfValidatorString(array('required' => false)),
+            'referralId' => new sfValidatorNumber(array('required' => false, 'min' => 0)),
             'selectedCandidate' => new sfValidatorNumber(array('required' => false, 'min' => 0)),
             'keywords' => new sfValidatorString(array('required' => false)),
             'modeOfApplication' => new sfValidatorString(array('required' => false)),
@@ -143,7 +147,8 @@ class viewCandidatesForm extends BaseForm {
         $searchParam->setToDate($this->getValue('toDate'));
         $searchParam->setKeywords($this->getValue('keywords'));
         $searchParam->setCandidateName($this->getValue('candidateName'));
-
+        $searchParam->setEmpNumber($this->getValue('referralId'));
+        $searchParam->setReferralName($this->getValue('referralName'));
         return $searchParam;
     }
 
@@ -169,6 +174,8 @@ class viewCandidatesForm extends BaseForm {
         $this->setDefault('toDate', set_datepicker_date_format($displayToDate));
         $this->setDefault('keywords', $searchParam->getKeywords());
         $this->setDefault('candidateName', $searchParam->getCandidateName());
+        $this->setDefault('referralId', $searchParam->getEmpNumber());
+        $this->setDefault('referralName',$searchParam->getReferralName());
     }
 
     /**
@@ -265,6 +272,21 @@ class viewCandidatesForm extends BaseForm {
             $jsonArray[] = array('name' => $name, 'id' => $candidate['id']);
         }
         $jsonString = json_encode($jsonArray);
+        return $jsonString;
+    }
+    
+    /**
+     * Returns the employee json list
+     */
+    public function getEmpListInCandidate() {
+    	$jsonArray = array();
+    	$empList =  $this->getCandidateService()->getEmpListInCandidate();
+    	//print_r("Sunil :"+ $empList );
+    	foreach($empList as $employee){
+    		 $name = trim(trim($employee['emp_firstname'] . ' ' . $employee['emp_lastname']));
+    		 $jsonArray[] = array('name' => $name, 'id' => $employee['emp_number']);
+    	}
+    	$jsonString = json_encode($jsonArray);
         return $jsonString;
     }
 

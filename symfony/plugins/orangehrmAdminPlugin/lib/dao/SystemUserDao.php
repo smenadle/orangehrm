@@ -278,6 +278,15 @@ class SystemUserDao extends BaseDao {
         
     }
     
+    public function getAdminUsers() {
+	    $q = Doctrine_Query::create()->from('SystemUser')
+		    ->where('user_role_id = ?', SystemUser::ADMIN_USER_ROLE_ID);
+	    
+	    $q->addWhere('status = ?', SystemUser::ENABLED);
+	    $q->addWhere('deleted = ?', SystemUser::UNDELETED);
+	    return $q->execute();
+    }
+    
     public function updatePassword($userId, $password) {
         
         try {

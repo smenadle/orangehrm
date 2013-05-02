@@ -59,9 +59,7 @@ abstract class PluginSystemUser extends BaseSystemUser
             return $this->getEmployee()->getEmpFirstname();
         }else{
             return $this->getUserRole()->getName();
-        }
-            
-           
+        }  
     }
 
 }

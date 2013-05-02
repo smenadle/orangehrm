@@ -196,7 +196,7 @@ class JobInterviewForm extends BaseForm {
     }
 
     protected function saveInterview($newJobInterview, $selectedInterviewerArrayList) {
-
+		$empNumber = sfContext::getInstance()->getUser()->getEmployeeNumber();
         $name = $this->getValue('name');
         $date = $this->getValue('date');
         $time = $this->getValue('time');
@@ -220,15 +220,19 @@ class JobInterviewForm extends BaseForm {
         }
 
         $interviewId = $newJobInterview->getId();
+        
         if (!empty($selectedInterviewerArrayList)) {
-            for ($i = 0; $i < count($selectedInterviewerArrayList); $i++) {
-                $newInterviewer = new JobInterviewInterviewer();
-                $newInterviewer->setInterviewerId($selectedInterviewerArrayList[$i]);
-                $newInterviewer->setInterviewId($interviewId);
-                $newInterviewer->save();
-            }
+	        for ($i = 0; $i < count($selectedInterviewerArrayList); $i++) {
+		        $newInterviewer = new JobInterviewInterviewer();
+		        $newInterviewer->setInterviewerId($selectedInterviewerArrayList[$i]);
+		        $newInterviewer->setInterviewId($interviewId);
+		        $newInterviewer->save();
+		       // $interviewMailer->sendToInterviewer($selectedInterviewerArrayList[$i]);
+	        }
         }
-
+         //Now send mail to HR admin and Hiring manager
+        $interviewMailer = new InterviewMailer($empNumber, $this->candidateId, $this->vacancyId,$this->selectedAction, $newJobInterview, $selectedInterviewerArrayList);
+        $interviewMailer->send();
         return $interviewId;
     }
 

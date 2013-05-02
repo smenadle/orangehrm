@@ -27,7 +27,7 @@ $cultureElements = explode('_', $sf_user->getCulture());
 
     <head>
         
-        <title><?php echo __('Active Job Vacancies'); ?></title>
+        <title><?php echo __('Synerzip Active Job Vacancies'); ?></title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         
         <?php use_stylesheet('../orangehrmRecruitmentPlugin/css/viewJobsSuccess'); ?>
@@ -39,13 +39,16 @@ $cultureElements = explode('_', $sf_user->getCulture());
     <body>
 
         <div id="jobPage">
+        	<div align="right">
+    			Welcome  <?php echo $_SESSION['fname']?> &nbsp;&nbsp;&nbsp; <a href="/orangehrm/symfony/web/index.php/auth/logout" target="_parent">Logout</a>
+			</div>
 
             <div class="outerbox">
 
                 <div class="maincontent">
 
                     <div class="mainHeading">
-                        <h2><?php echo __('Active Job Vacancies'); ?></h2>
+                        <h2><?php echo __('Synerzip Active Job Vacancies'); ?></h2>
                     </div>
 
                     <?php if(count($publishedVacancies) != 0): ?>

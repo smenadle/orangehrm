@@ -14,6 +14,18 @@ $(document).ready(function() {
     }).result(function(event, item) {
         $("#candidateSearch_candidateName").valid();
     });
+    
+    $("#candidateSearch_referralName").autocomplete(employees, {
+        formatItem: function(item) {
+            return item.name;
+        },
+        matchContains:true
+    }).result(function(event, item) {
+        $("#candidateSearch_referralName").valid();
+        $("#candidateSearch_referralId").val(item.id);
+    });
+    
+    
     var jobTitle = $('#candidateSearch_jobTitle').val();
     var vacancyId = $('#candidateSearch_jobVacancy').val();
     var hiringManagerId = $('#candidateSearch_hiringManager').val();
@@ -57,6 +69,9 @@ $(document).ready(function() {
     $('#btnSrch').click(function() {
         $('#candidateSearch_candidateName.inputFormatHint').val('');
         $('#candidateSearch_keywords.inputFormatHint').val('');
+        if ($('#candidateSearch_referralName').val() == "") {
+           $('#candidateSearch_referralId').val("");
+        }
         $('#frmSrchCandidates').submit();
    
     });
@@ -73,6 +88,8 @@ $(document).ready(function() {
         $('#candidateSearch_candidateName').val("");
         $('#candidateSearch_keywords').val("");
         $('#candidateSearch_selectedCandidate').val("");
+         $("#candidateSearch_referralName").val("");
+        $("#candidateSearch_referralId").val("");
         $('#frmSrchCandidates *[name^="additionalParams"]').val("");
         $('#frmSrchCandidates').submit();
 
@@ -83,6 +100,11 @@ $(document).ready(function() {
         $("#candidateSearch_candidateName").val(lang_typeForHints)
         .addClass("inputFormatHint");
     }
+    
+    if ($("#candidateSearch_referralName").val() == '') {
+        $("#candidateSearch_referralName").val(lang_typeForHints)
+        .addClass("inputFormatHint");
+    }
 
     $("#candidateSearch_candidateName").one('focus', function() {
 
@@ -91,6 +113,15 @@ $(document).ready(function() {
             $(this).removeClass("inputFormatHint");
         }
     });
+    
+   $("#candidateSearch_referralName").one('focus', function() {
+
+        if ($(this).hasClass("inputFormatHint")) {
+            $(this).val("");
+            $(this).removeClass("inputFormatHint");
+        }
+    });
+    
     if ($("#candidateSearch_keywords").val() == '') {
         $("#candidateSearch_keywords").val(lang_enterCommaSeparatedWords)
         .addClass("inputFormatHint");
@@ -105,6 +136,14 @@ $(document).ready(function() {
     });
 
     $("#candidateSearch_candidateName").click(function() {
+
+        if ($(this).hasClass("inputFormatHint")) {
+            $(this).val("");
+            $(this).removeClass("inputFormatHint");
+        }
+    });
+    
+     $("#candidateSearch_referralName").click(function() {
 
         if ($(this).hasClass("inputFormatHint")) {
             $(this).val("");

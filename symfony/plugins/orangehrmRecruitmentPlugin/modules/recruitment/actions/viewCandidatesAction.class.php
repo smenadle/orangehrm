@@ -82,7 +82,8 @@ class viewCandidatesAction extends sfAction {
         $searchParam = new CandidateSearchParameters();
 
         $searchParam->setIsAdmin($isAdmin);
-        $searchParam->setEmpNumber($usrObj->getEmployeeNumber());
+        $searchParam->setEmpNumber($request->getParameter('referralId'));
+        $searchParam->setReferralName($request->getParameter('referralName'));
         $noOfRecords = $searchParam->getLimit();
         $offset = ($pageNumber >= 1) ? (($pageNumber - 1) * $noOfRecords) : ($request->getParameter('pageNo', 1) - 1) * $noOfRecords;
         $searchParam->setAdditionalParams($request->getParameter('additionalParams', array()));

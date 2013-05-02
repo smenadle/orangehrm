@@ -47,6 +47,11 @@ class CandidateSearchParameters {
     private $isAdmin;
     private $additionalParams;
     private $empNumber;
+    private  $referralName;
+    
+    public function getReferralName(){
+    	return $this-> referralName;
+    }
 
     public function getAllowedCandidateList() {
         return $this->allowedCandidateList;
@@ -165,6 +170,10 @@ class CandidateSearchParameters {
         return $this->candidateId . "_" . $this->vacancyId;
     }
 
+	public function setReferralName($referralName){
+    	return $this-> referralName = $referralName;
+    }
+    
     public function setAllowedCandidateList($allowedCandidateList) {
         $this->allowedCandidateList = $allowedCandidateList;
     }

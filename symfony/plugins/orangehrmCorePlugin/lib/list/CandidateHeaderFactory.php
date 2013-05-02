@@ -36,6 +36,7 @@ class CandidateHeaderFactory extends ohrmListConfigurationFactory {
 		    'elementType' => 'label',
 		    'elementProperty' => array('getter' => 'getHiringManagerName'),
 		));
+		
 
 		$headerList[4]->populateFromArray(array(
 		    'name' => 'Date of Application',
@@ -55,6 +56,14 @@ class CandidateHeaderFactory extends ohrmListConfigurationFactory {
 		    'elementProperty' => array('getter' => 'getStatusName'),
 		));
 
+		$headerList[4]->populateFromArray(array(
+		    'name' => 'Referred By',
+		    'isSortable' => true,
+		    'sortField' => 'ref.emp_firstname',
+		    'elementType' => 'label',
+		    'elementProperty' => array('getter' => 'getReferralName'),
+		));
+		
 		$headerList[6]->populateFromArray(array(
 		    'name' => 'Resume',
 		    'isSortable' => false,

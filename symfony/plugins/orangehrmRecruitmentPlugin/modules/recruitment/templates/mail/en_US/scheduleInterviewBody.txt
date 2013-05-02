@@ -1,0 +1,19 @@
+Hi %recipientFirstName%,
+
+Interview scheduled for %candidateName%  shortlisted for %vacancyName% vacancy. 
+
+Please find below the Interview schedule Details
+
+Interviewer Name : %interviewer%
+Interview Date   : %interviewDate%
+Interview Time   : %interviewTime%
+Note		     : %note%
+
+
+You were sent this mail, as you are hiring manager for %vacancyName% or synerzip HR.
+
+
+Thank you.
+Synerzip HRMS
+
+Note: This is an automated notification. Please don't reply to this mail.

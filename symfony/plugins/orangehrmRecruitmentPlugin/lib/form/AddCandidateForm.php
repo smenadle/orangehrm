@@ -20,6 +20,7 @@
  */
 class AddCandidateForm extends BaseForm {
 
+  	private $employeeService;
     private $vacancyService;
     private $candidateService;
     public $attachment;
@@ -31,6 +32,7 @@ class AddCandidateForm extends BaseForm {
     public $allowedVacancyList;
     public $empNumber;
     private $isAdmin;
+    private $referredBy;
     private $allowedFileTypes = array(
         "docx" => "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
         "doc" => "application/msword",
@@ -91,6 +93,19 @@ class AddCandidateForm extends BaseForm {
         }
         return $this->interviewService;
     }
+    
+     /**
+     * Get VacancyService
+     * @returns VacncyService
+     */
+    public function getEmployeeService() {
+        if (is_null($this->employeeService)) {
+            $this->employeeService = new EmployeeService();
+            $this->employeeService->setEmployeeDao(new EmployeeDao());
+        }
+        return $this->employeeService;
+    }
+    
 
     /**
      *
@@ -136,6 +151,9 @@ class AddCandidateForm extends BaseForm {
             'appliedDate' => new ohrmWidgetDatePickerNew(array(), array('id' => 'addCandidate_appliedDate')),
             'vacancy' => new sfWidgetFormSelect(array('choices' => $vacancyList)),
             'resumeUpdate' => new sfWidgetFormChoice(array('expanded' => true, 'choices' => $resumeUpdateChoices)),
+            'referralName'=> new sfWidgetFormInputText(),
+            'referralId'=> new sfWidgetFormInputHidden(),
+           
         ));
 
         $inputDatePattern = sfContext::getInstance()->getUser()->getDateFormat();
@@ -154,6 +172,8 @@ class AddCandidateForm extends BaseForm {
                     array('invalid' => 'Date format should be ' . $inputDatePattern)),
             'vacancy' => new sfValidatorString(array('required' => false)),
             'resumeUpdate' => new sfValidatorString(array('required' => false)),
+            'referralName'=> new sfValidatorString(array('required' => false)),
+            'referralId' => new sfValidatorNumber(array('required' => false, 'min' => 0)),
         ));
 
         $this->widgetSchema->setNameFormat('addCandidate[%s]');
@@ -180,6 +200,13 @@ class AddCandidateForm extends BaseForm {
         $candidateVacancyList = $candidate->getJobCandidateVacancy();
         $defaultVacancy = ($candidateVacancyList[0]->getVacancyId() == "") ? "" : $candidateVacancyList[0]->getVacancyId();
         $this->setDefault('vacancy', $defaultVacancy);
+        $referralID = $candidate->getAddedPerson();
+        $this->setDefault('referralId', $referralID);
+        $employee = $this->getEmployeeService()->getEmployee($referralID);
+        $referralName = trim(trim($employee['firstName'] . ' ' . $employee['middleName'],' ') . ' ' . $employee['lastName']);
+        $this->setDefault('referralName', $referralName);
+        
+        
     }
 
     private function getActiveVacancyList() {
@@ -275,7 +302,18 @@ class AddCandidateForm extends BaseForm {
         if (!empty($this->removedHistory)) {
             $this->getCandidateService()->saveCandidateHistory($this->removedHistory);
         }
+        
+        //Now send mail to HR admin and Hiring manager
+        $addCandidateMailer = new AddCandidateMailer($empNumber, $candidateId, $vacancy);
+	    $addCandidateMailer->send();
+      
         return $resultArray;
+    }
+    
+    
+    protected function sendMail($candidateId, $vacancyId){
+    	
+    	
     }
 
     /**
@@ -343,7 +381,7 @@ class AddCandidateForm extends BaseForm {
         $candidate->comment = $this->getValue('comment');
         $candidate->contactNumber = $this->getValue('contactNo');
         $candidate->keywords = $this->getValue('keyWords');
-        $candidate->addedPerson = $this->addedBy;
+        $candidate->addedPerson = $this->getValue('referralId');
 
         if ($this->getValue('appliedDate') == "") {
             $candidate->dateOfApplication = date('Y-m-d');
@@ -426,6 +464,22 @@ class AddCandidateForm extends BaseForm {
         }
 
         return $mimeType;
+    }
+    
+    public function getEmployeeListAsJson() {
+        $jsonArray = array();
+       
+        $properties = array("empNumber","firstName", "middleName", "lastName", "termination_id");
+        $employeeList = $this->getEmployeeService()->getEmployeePropertyList($properties, 'lastName', 'ASC', true);
+
+        foreach ($employeeList as $employee) {
+            $empNumber = $employee['empNumber'];
+            $name = trim(trim($employee['firstName'] . ' ' . $employee['middleName'],' ') . ' ' . $employee['lastName']);
+        
+            $jsonArray[] = array('name' => $name, 'id' => $empNumber);
+        }
+        $jsonString = json_encode($jsonArray);
+        return $jsonString;
     }
 
 }

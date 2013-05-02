@@ -43,11 +43,12 @@
         <div id="srchCandidates">
             <div class="outerbox">
 
-                <div class="mainHeading"><h2 id="srchCandidatesHeading"><?php echo __('Candidates'); ?></h2></div>
+                <div class="mainHeading"><h2 id="srchCandidatesHeading"><?php echo __('Synerzip Candidates'); ?></h2></div>
                 <form name="frmSrchCandidates" id="frmSrchCandidates" method="post" action="<?php echo url_for('recruitment/viewCandidates'); ?>">
 
             <?php echo $form['_csrf_token']; ?>
             <?php echo $form["selectedCandidate"]->render(); ?>
+            <?php echo $form["referralId"]->render(); ?>
             <br class="clear"/>
             <div class="column">
                 <?php echo $form['jobTitle']->renderLabel(__('Job Title')); ?>
@@ -93,7 +94,13 @@
                 <br class="clear"/>
                 <label id="toDate" class="helpText"><?php echo __('To'); ?></label>
             </div>
-
+            <br class="clear"/>
+            <br class="clear"/>
+			<div class="column">
+                <?php echo $form['referralName']->renderLabel(__('Referred By')); ?>
+                <?php echo $form['referralName']->render(array("class" => "formInput", "style" => $textBoxWidth)); ?>
+            </div>
+            
             <?php include_component('core', 'ohrmPluginPannel', array('location' => 'listing_layout_navigation_bar_1')); ?>
 
                 <div class="actionbar" style="border-top: 1px solid #FAD163; margin-top: 3px">
@@ -147,6 +154,7 @@
                 var datepickerDateFormat = '<?php echo get_datepicker_date_format($sf_user->getDateFormat()); ?>';
                 var lang_validDateMsg = '<?php echo __(ValidationMessages::DATE_FORMAT_INVALID, array('%format%' => str_replace('yy', 'yyyy', get_datepicker_date_format($sf_user->getDateFormat())))) ?>';
                 var candidates = <?php echo str_replace('&#039;', "'", $form->getCandidateListAsJson()) ?> ;
+                var employees = <?php echo str_replace('&#039;', "'", $form->getEmpListInCandidate()) ?> ;
                 var vacancyListUrl = '<?php echo url_for('recruitment/getVacancyListForJobTitleJson?jobTitle='); ?>';
                 var hiringManagerListUrlForJobTitle = '<?php echo url_for('recruitment/getHiringManagerListJson?jobTitle='); ?>';
                 var hiringManagerListUrlForVacancyId = '<?php echo url_for('recruitment/getHiringManagerListJson?vacancyId='); ?>';

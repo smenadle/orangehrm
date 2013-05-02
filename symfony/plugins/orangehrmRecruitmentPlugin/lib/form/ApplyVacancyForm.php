@@ -133,6 +133,12 @@ class ApplyVacancyForm extends BaseForm {
         }
 
         $this->_saveCandidateVacancies($vacnacyId, $this->candidateId);
+        
+        //Now send mail to HR admin and Hiring manager
+        $empNumber = sfContext::getInstance()->getUser()->getEmployeeNumber();
+        $addCandidateMailer = new AddCandidateMailer($empNumber, $this->candidateId, $vacnacyId);
+	    $addCandidateMailer->send();
+	    
         return $resultArray;
     }
 
@@ -154,6 +160,7 @@ class ApplyVacancyForm extends BaseForm {
         $candidate->dateOfApplication = $date . " " . date('H:i:s');
         $candidate->status = JobCandidate::ACTIVE;
         $candidate->modeOfApplication = JobCandidate::MODE_OF_APPLICATION_ONLINE;
+        $candidate->addedPerson = sfContext::getInstance()->getUser()->getEmployeeNumber();
 
         $candidateService = $this->getCandidateService();
         $candidateService->saveCandidate($candidate);

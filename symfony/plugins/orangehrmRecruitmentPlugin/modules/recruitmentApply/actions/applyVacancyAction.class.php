@@ -60,7 +60,7 @@ class applyVacancyAction extends sfAction {
 
         $this->vacancyId = $request->getParameter('id');
         //$this->candidateId = $request->getParameter('candidateId');
-	$this->getResponse()->setTitle(__("Vacancy Apply Form"));
+		$this->getResponse()->setTitle(__("Vacancy Apply Form"));
         //$param = array('candidateId' => $this->candidateId);
         $this->setForm(new ApplyVacancyForm(array(), $param, true));
 

@@ -103,6 +103,17 @@ class SystemUserService extends BaseService{
     }
     
     /**
+     * Get the all admin users of system
+     */
+    public function getAdminSystemUsers(){
+    	 try {
+            return $this->getSystemUserDao()->getAdminUsers();
+        } catch (Exception $e) {
+            throw new ServiceException($e->getMessage(),$e->getCode(),$e);
+        }
+    }
+    
+    /**
      * Return an array of System User Ids
      * 
      * <pre>

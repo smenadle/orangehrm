@@ -1,0 +1,1 @@
+Candidate Shortlist Notification - %candidateName% shortlisted for %vacancyName% vacancy

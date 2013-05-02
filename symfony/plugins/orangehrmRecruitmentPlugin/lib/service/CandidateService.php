@@ -108,6 +108,13 @@ class CandidateService extends BaseService {
         $searchCandidateQuery = $this->buildSearchQuery($searchParam);
         return $this->getCandidateDao()->searchCandidates($searchCandidateQuery);
     }
+    
+    /**
+     * Returns all employee who registered candidate for specific vacancy
+     */
+    public function getEmpListInCandidate(){
+		 return $this->getCandidateDao()->getEmpListInCandidate();
+    }
 
     /**
      * Retrieve  candidate list
@@ -125,7 +132,11 @@ class CandidateService extends BaseService {
      * @return <type>
      */
     public function saveCandidate(JobCandidate $candidate) {
-        return $this->candidateDao->saveCandidate($candidate);
+	    
+	    $saveCandidate = $this->candidateDao->saveCandidate($candidate);
+	 
+	    
+	    return $saveCandidate;
     }
 
     /**

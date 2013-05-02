@@ -154,6 +154,8 @@ class CandidateDao extends BaseDao {
                 $param->setDateOfApplication($candidate['date_of_application']);
                 $param->setAttachmentId($candidate['attachmentId']);
                 $param->setStatusName(ucwords(strtolower($candidate['status'])));
+                $referralName = $candidate['ref_firstname'] . " " . $candidate['ref_middle_name'] . " " . $candidate['ref_lastname'];
+                $param->setReferralName($referralName);
                 $candidatesList[] = $param;
             }
             return $candidatesList;
@@ -233,6 +235,7 @@ class CandidateDao extends BaseDao {
                     ->set('middleName', '?', $candidate->middleName)
                     ->set('dateOfApplication', '?', $candidate->dateOfApplication)
                     ->set('comment', '?', $candidate->comment)
+                    ->set('addedPerson', '?', $candidate->addedPerson)
                     ->where('id = ?', $candidate->id);
 
             return $q->execute();
@@ -456,15 +459,34 @@ class CandidateDao extends BaseDao {
             throw new DaoException($e->getMessage());
         }
     }
+    
+    /**
+     * Returns all employee who registered candidate for specific vacancy
+     */
+    public function getEmpListInCandidate(){
+		 try {
+		 	
+		 	$query = "SELECT emp_number, employee_id, emp_firstname, emp_lastname FROM hs_hr_employee";
+			$query .= " WHERE emp_number IN (SELECT added_person FROM ohrm_job_candidate)";
+		
+	        $pdo = Doctrine_Manager::connection()->getDbh();
+	        $res = $pdo->query($query);
+	        $empList = $res->fetchAll();            
+	        return $empList;
+	    } catch (Exception $e) {
+	        throw new DaoException($e->getMessage());
+	    }
+    }
 
     public function buildSearchQuery(CandidateSearchParameters $paramObject, $countQuery = false) {
 
         try {
-            $query = ($countQuery) ? "SELECT COUNT(*)" : "SELECT jc.id, jc.first_name, jc.middle_name, jc.last_name, jc.date_of_application, jcv.status, jv.name, e.emp_firstname, e.emp_middle_name, e.emp_lastname, e.termination_id, jv.status as vacancyStatus, jv.id as vacancyId, ca.id as attachmentId, jc.status as candidateStatus";
+            $query = ($countQuery) ? "SELECT COUNT(*)" : "SELECT jc.id, jc.first_name, jc.middle_name, jc.last_name, jc.date_of_application, jcv.status, jv.name, e.emp_firstname, e.emp_middle_name, e.emp_lastname, e.termination_id,  ref.emp_firstname AS ref_firstname, ref.emp_middle_name AS ref_middle_name, ref.emp_lastname AS ref_lastname, jv.status as vacancyStatus, jv.id as vacancyId, ca.id as attachmentId, jc.status as candidateStatus";
             $query .= "  FROM ohrm_job_candidate jc";
             $query .= " LEFT JOIN ohrm_job_candidate_vacancy jcv ON jc.id = jcv.candidate_id";
             $query .= " LEFT JOIN ohrm_job_vacancy jv ON jcv.vacancy_id = jv.id";
             $query .= " LEFT JOIN hs_hr_employee e ON jv.hiring_manager_id = e.emp_number";
+            $query .= " LEFT JOIN hs_hr_employee ref ON jc.added_person = ref.emp_number";
             $query .= " LEFT JOIN ohrm_job_candidate_attachment ca ON jc.id = ca.candidate_id";
             $query .= ' WHERE jc.date_of_application  BETWEEN ' . "'{$paramObject->getFromDate()}'" . ' AND ' . "'{$paramObject->getToDate()}'";
 
@@ -562,11 +584,12 @@ class CandidateDao extends BaseDao {
         $this->_addCandidateNameClause($whereFilters, $paramObject);
 
         $this->_addAdditionalWhereClause($whereFilters, 'jc.mode_of_application', $paramObject->getModeOfApplication());
+		$this->_addAdditionalWhereClause($whereFilters, 'jc.added_person', $paramObject->getEmpNumber());
 
 
         $whereClause .= ( count($whereFilters) > 0) ? (' AND ' . implode('AND ', $whereFilters)) : '';
         if ($empNumber != null) {
-            $whereClause .= " OR jc.id NOT IN (SELECT ojcv.candidate_id FROM ohrm_job_candidate_vacancy ojcv) AND jc.added_person = " . $empNumber;
+            $whereClause .= " OR jc.id NOT IN (SELECT ojcv.candidate_id FROM ohrm_job_candidate_vacancy ojcv) " ;
         }
         if(!empty($status)){
             $whereClause .=" AND NOT ISNULL(jcv.status)";

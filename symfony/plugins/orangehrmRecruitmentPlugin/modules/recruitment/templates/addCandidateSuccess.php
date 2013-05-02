@@ -25,10 +25,14 @@
 <?php echo stylesheet_tag('orangehrm.datepicker.css') ?>
 <?php echo javascript_include_tag('orangehrm.datepicker.js') ?>
 <?php use_stylesheet('../../../themes/orange/css/ui-lightness/jquery-ui-1.7.2.custom.css'); ?>
-<?php use_javascript('../../../scripts/jquery/ui/ui.core.js'); ?>
-<?php use_javascript('../../../scripts/jquery/ui/ui.dialog.js'); ?>
+<?php use_stylesheet('../../../themes/orange/css/jquery/jquery.autocomplete.css'); ?>
+<?php use_javascript('../../../scripts/jquery/jquery.autocomplete.js'); ?>
 <?php use_stylesheet('../orangehrmRecruitmentPlugin/css/addCandidateSuccess'); ?>
 <?php use_javascript('../orangehrmRecruitmentPlugin/js/addCandidateSuccess'); ?>
+
+<?php use_javascript('../../../scripts/jquery/ui/ui.core.js'); ?>
+<?php use_javascript('../../../scripts/jquery/ui/ui.dialog.js'); ?>
+
 <?php $browser = $_SERVER['HTTP_USER_AGENT']; ?>
 <?php if (strstr($browser, "MSIE 8.0")): ?>
 <?php $keyWrdWidth = 'width: 276px' ?>
@@ -72,6 +76,7 @@
                 <form name="frmAddCandidate" id="frmAddCandidate" method="post" action="<?php echo url_for('recruitment/addCandidate?id=' . $candidateId); ?>" enctype="multipart/form-data">
 
             <?php echo $form['_csrf_token']; ?>
+             <?php echo $form["referralId"]->render(); ?>
             <br class="clear"/>
 
             <div class="nameColumn" id="firstNameDiv">
@@ -192,6 +197,14 @@
                         <div class="errorHolder below"></div>
                     </div>
                     <br class="clear" />
+                    <div>
+               	 <?php echo $form['referralName']->renderLabel(__('Referred By')); ?>
+	             <?php echo $form['referralName']->render(array("class" => "formInput", "style" => $textBoxWidth)); ?>
+	             
+                        <div class="errorHolder below"></div>
+                    </div>
+                   
+                    <br class="clear" />
                     <div class="formbuttons">
                 <?php if ($edit): ?>
                             <input type="button" class="savebutton" name="btnSave" id="btnSave"
@@ -238,6 +251,8 @@
 
                                 <script type="text/javascript">
                                     //<![CDATA[
+                                    var employees = <?php echo str_replace('&#039;', "'", $form->getEmployeeListAsJson()) ?> ;
+                   					var employeesArray = eval(employees);
                                     var datepickerDateFormat = '<?php echo get_datepicker_date_format($sf_user->getDateFormat()); ?>';
                                     var lang_firstNameRequired = '<?php echo __(ValidationMessages::REQUIRED); ?>';
                                     var lang_lastNameRequired = '<?php echo __(ValidationMessages::REQUIRED); ?>';
@@ -274,4 +289,5 @@
                                     var activeStatus = "<?php echo JobCandidate::ACTIVE; ?>";
                                     var candidateStatus = "<?php echo $candidateStatus; ?>";
                                     var invalidFile = "<?php echo $invalidFile; ?>";
+                                    var lang_typeForHints = '<?php echo __("Type for hints") . "..."; ?>'
 </script>

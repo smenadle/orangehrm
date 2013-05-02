@@ -108,12 +108,14 @@ class myUser extends sfBasicSecurityUser {
      */
     public function isAuthenticated() {
 
-        if (sfContext::getInstance()->getModuleName() == 'recruitmentApply') {
+       /* if (sfContext::getInstance()->getModuleName() == 'recruitmentApply') {
             return true;
         } else {
             // Checks orangehrm session variable
             return isset($_SESSION['user']);
-        }
+        }*/
+        
+        return isset($_SESSION['user']);
     }
 
     /**

@@ -33,7 +33,7 @@
   <property name="apidocs.dir" value="${dist.dir}/apidocs"/>
   <property name="xampp.dir" value="../../xampp"/>
 
-  <svnlastrevision workingcopy="${project.dir}" propertyname="svn.revision"/>
+  <!--<svnlastrevision workingcopy="${project.dir}" propertyname="svn.revision"/>-->
   <property name="base.name" value="${package.name}.${svn.revision}"/>
 
   <target name="prepare">

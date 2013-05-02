@@ -31,6 +31,11 @@ class JobVacancy extends PluginJobVacancy {
         $hmName = ($this->getHiringManagerId() != "") ? $firstAndLastName : "";
         return $hmName;
     }
+    
+    public function getHiringManager() {
+	    $employee = $this->getEmployee();
+	    return $employee;
+    }
 
     public function getStateLabel() {
         $stateName = "";
